@@ -98,3 +98,84 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+##### Данные
+
+##### Интерфейсы
+
+Интерфейс для описания карточек товара:
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+}  
+
+Интерфейс для описания данных покупателя:
+interface IBuyer {
+  payment: 'card' | 'cash' | '';
+  email: string;
+  phone: string;
+  address: string;
+} 
+
+
+##### Модели данных
+
+##### Класс CatalogProducts
+
+Хранение товаров, которые можно купить в приложении
+
+Конструктор:  
+`constructor( products: IProduct[] )` - принимает массив товаров.
+
+Поля класса:  
+`catalog: IProduct[]` - хранит массив товаров.
+`currentProduct: IProduct | null` - хранит товар, выбранный для подробного отображения.
+
+Методы класса:  
+`saveCatalog(products: IProduct[] ): void`- сохранение массива товаров полученного в параметрах метода;
+`get catalog(): IProduct[]` - получение массива товаров из модели;
+`getCatalogFromId(id: string): IProduct` - получение одного товара по его id;
+`set currentProduct(product: IProduct)` - сохранение товара для подробного отображения;
+`get currentProduct(): IProduct | null` - получение товара для подробного отображения.
+
+##### Класс ShopingCart
+
+Хранит массив товаров, выбранных покупателем для покупки.
+
+Конструктор класса не принимает параметров.
+
+Поля класса:
+`contents: IProduct[]` - массив товаров.
+
+Методы класса:
+`get contents(): IProduct[]` - получение массива товаров, которые находятся в корзине;
+`addProduct(IProduct): void` - добавление товара, который был получен в параметре, в массив корзины;
+`deleteProduct(IProduct): void` - удаление товара, полученного в параметре из массива корзины;
+`cleanCart(): void` - очистка корзины;
+`getPriceProducts(): void` - получение стоимости всех товаров в корзине;
+`getQuantity(): number` - получение количества товаров в корзине;
+`isInTheCart(id: string): boolean` - проверка наличия товара в корзине по его id, полученного в параметр метода.
+
+
+##### Класс CustomerData
+
+Хранит данные покупателя.
+
+Конструктор класса не принимает параметров.
+
+Поля класса:
+
+`payment: 'card' | 'cash' | ''` - вид оплаты.
+`email: string` - адрес.
+`phone: string` - телефон.
+`address: string` - email.
+`validObject` - объект для отображения незаполненных полей формы. 
+
+Методы класса:
+`set <T>payment, email ...(): T` - сохранение данных в модели. 
+`getData(): IBuyer` - получение всех данных покупателя;
+`cleanData(): void` - очистка данных покупателя;
+`validateData(): object`валидация данных. 
