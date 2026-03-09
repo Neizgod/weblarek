@@ -20,3 +20,8 @@ export interface IBuyer {
   phone: string;
   address: string;
 }
+
+export interface IObjectForApi extends IBuyer {
+  total: number;
+  items: string[];
+}

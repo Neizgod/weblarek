@@ -4,20 +4,22 @@ export class CatalogProducts {
   protected _catalog: IProduct[];
   protected _currentProduct: IProduct | null;
 
-  constructor(products: IProduct[]) {
-    this._catalog = products;
+  constructor() {
+    this._catalog = [];
     this._currentProduct = null;
   }
 
-  saveCatalog(products: IProduct[]): void {
-    this._catalog = products;
+  setCatalog(products: IProduct[]): void {
+    for (let i of products){
+      this._catalog.push(i)
+    }
   }
 
-  get catalog(): IProduct[] {
+  getCatalog(): IProduct[] {
     return this._catalog;
   }
 
-  getCatalogFromId(id: string): IProduct {
+  getProductFromId(id: string): IProduct {
     const result = this._catalog.filter((item) => {
       if (item.id === id) return true;
     });
@@ -25,11 +27,11 @@ export class CatalogProducts {
     return result[0];
   }
 
-  set currentProduct(product: IProduct) {
+  setCurrentProduct(product: IProduct) {
     this._currentProduct = product;
   }
 
-  get currentProduct(): IProduct | null {
+  getCurrentProduct(): IProduct | null {
     return this._currentProduct ? this._currentProduct : null;
   }
 }
