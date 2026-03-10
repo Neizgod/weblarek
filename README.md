@@ -112,12 +112,12 @@ Presenter - презентер содержит основную логику п
 
 Интерфейс для описания карточек товара:
 interface IProduct {
-id: string;
-description: string;
-image: string;
-title: string;
-category: string;
-price: number | null;
+id: string - id товара;
+description: string - описание товара;
+image: string - ссылка на картинку товара;
+title: string - название товара;
+category: string - категория товара;
+price: number | null - цена товара, если цена null, то товар бесценен.
 }
 
 Интерфейс для описания данных покупателя:
@@ -130,8 +130,8 @@ address: string;
 
 Интерфейс для отправки данных пользователя на сервер:
 interface IObjectForApi extends IBuyer {
-total: number;
-items: string[];
+total: number - стоимость всех товаров в корзине.
+items: string[] - массив id покупаемых товаров.
 }
 
 ##### Модели данных
@@ -149,7 +149,7 @@ items: string[];
 Методы класса:  
 `setCatalog(products: IProduct[] ): void`- сохранение массива товаров полученного в параметрах метода;
 `getCatalog(): IProduct[]` - получение массива товаров из модели;
-`getProductFromId(id: string): IProduct` - получение одного товара по его id;
+`getProductFromId(id: string): IProduct | undefined` - получение одного товара по его id;
 `setCurrentProduct(product: IProduct)` - сохранение товара для подробного отображения;
 `getCurrentProduct(): IProduct | null` - получение товара для подробного отображения.
 
@@ -163,9 +163,9 @@ items: string[];
 `contents: IProduct[]` - массив товаров.
 
 Методы класса:
-`getContents(): IProduct[] | null` - получение массива товаров, которые находятся в корзине;
+`getContents(): IProduct[]` - получение массива товаров, которые находятся в корзине;
 `addProduct(product: IProduct): void` - добавление товара, который был получен в параметре, в массив корзины;
-`deleteProduct(product: IProduct): void` - удаление товара, полученного в параметре из массива корзины;
+`deleteProduct(product: IProduct): void | undefined` - удаление товара, полученного в параметре из массива корзины;
 `cleanCart(): void` - очистка корзины;
 `getPriceProducts(): number` - получение стоимости всех товаров в корзине;
 `getQuantity(): number` - получение количества товаров в корзине;
@@ -186,7 +186,10 @@ items: string[];
 `validObject: {address: "Не заполнено поле адрес", email: "Не запонлено поле email", phone: "Не заполнено поле телефон", payment: "Не выбран вид оплаты"}` - объект для отображения незаполненных полей формы.
 
 Методы класса:
-`set <T>payment, email ...(): T` - сохранение данных в модели;
+`setPayment(payment: 'card' | 'cash' | ''): void` - сохранение варианта оплаты;
+`setEmail(email: string): void` - сохранение email;
+`setPhone(phone: string):void` - сохранение телефона;
+`setAddress(address: string):void` - сохранение адреса;
 `getData(): IBuyer` - получение всех данных покупателя;
 `cleanData(): void` - очистка данных покупателя;
 `validateData(): validObject | true` - валидация данных.

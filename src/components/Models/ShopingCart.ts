@@ -1,4 +1,4 @@
-import { IProduct } from "../../../types";
+import { IProduct } from "../../types";
 
 export class ShopingCart {
   protected _contents: IProduct[];
@@ -7,8 +7,7 @@ export class ShopingCart {
     this._contents = [];
   }
 
-  getContents(): IProduct[] | null {
-    if (this._contents.length === 0) return null;
+  getContents(): IProduct[] {
     return this._contents;
   }
 
@@ -16,8 +15,9 @@ export class ShopingCart {
     this._contents.push(product);
   }
 
-  deleteProduct(product: IProduct): void {
+  deleteProduct(product: IProduct): void | undefined {
     const indexEl = this._contents.findIndex((item) => item.id === product.id);
+    if (indexEl === -1) return undefined
     this._contents.splice(indexEl, 1);
   }
 
@@ -37,8 +37,6 @@ export class ShopingCart {
   }
 
   isInTheCart(id: string): boolean {
-    const res = this._contents.findIndex((item) => item.id === id);
-    if (res === -1) return false;
-    return true;
+    return this._contents.some(item => item.id === id);
   }
 }

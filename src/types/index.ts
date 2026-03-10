@@ -25,3 +25,5 @@ export interface IObjectForApi extends IBuyer {
   total: number;
   items: string[];
 }
+
+export type payment = "card" | "cash" | "";
