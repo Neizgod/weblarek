@@ -206,6 +206,6 @@ items: string[] - массив id покупаемых товаров.
 `api: IApi` -  экземпляр класcа Api.
 
 Методы:  
-`getProducts(): Promise<{total: number; items: IProduct[]}` - выполняет GET запрос на сервер для получения объекта с количестов и товарами.  
+`getProducts(): Promise<{total: number; items: IProduct[]}` - выполняет GET запрос на сервер для получения объекта с количеством товаров и самими товарами.  
 `postData(data: IObjectForApi): Promise<{ id: string; total: number }` - принимает объект с данными, которые будут переданы в JSON в теле `POST` запроса.
 
