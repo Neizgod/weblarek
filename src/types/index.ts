@@ -15,7 +15,7 @@ export interface IProduct {
 } 
 
 export interface IBuyer {
-  payment: 'card' | 'cash' | '';
+  payment: Payment;
   email: string;
   phone: string;
   address: string;
@@ -26,4 +26,4 @@ export interface IObjectForApi extends IBuyer {
   items: string[];
 }
 
-export type payment = "card" | "cash" | "";
+export type Payment = "card" | "cash" | "";

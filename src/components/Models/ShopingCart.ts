@@ -15,10 +15,9 @@ export class ShopingCart {
     this._contents.push(product);
   }
 
-  deleteProduct(product: IProduct): void | undefined {
+  deleteProduct(product: IProduct): void{
     const indexEl = this._contents.findIndex((item) => item.id === product.id);
-    if (indexEl === -1) return undefined
-    this._contents.splice(indexEl, 1);
+    if (indexEl !== -1) this._contents.splice(indexEl, 1);
   }
 
   cleanCart(): void {

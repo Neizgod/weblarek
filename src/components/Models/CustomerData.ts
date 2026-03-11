@@ -1,23 +1,16 @@
-import { IBuyer, payment } from "../../types";
+import { IBuyer, Payment } from "../../types";
 
 export class CustomerData implements IBuyer {
-  payment: payment;
+  payment: Payment;
   email: string;
   phone: string;
   address: string;
-  errorsObject: {
-    address?: string;
-    email?: string;
-    phone?: string;
-    payment?: string;
-  };
 
   constructor() {
     this.address = "";
     this.email = "";
     this.phone = "";
     this.payment = "";
-    this.errorsObject = {};
   }
 
   setAddress(address: string): void {
@@ -32,7 +25,7 @@ export class CustomerData implements IBuyer {
     this.phone = phone;
   }
 
-  setPayment(payment: payment): void {
+  setPayment(payment: Payment): void {
     this.payment = payment;
   }
 
@@ -41,7 +34,6 @@ export class CustomerData implements IBuyer {
     this.email = "";
     this.phone = "";
     this.payment = "";
-    this.errorsObject = {};
   }
 
   getData(): IBuyer {
@@ -56,28 +48,18 @@ export class CustomerData implements IBuyer {
   validateData():
     | { address?: string; email?: string; phone?: string; payment?: string }
     | true {
-    const errorsMessage = {
-      address: "Не указан адрес",
-      email: "Не указан email",
-      phone: "Не указан телефон",
-      payment: "Не указан способ оплаты",
+    const errors = {} as {
+      address?: string;
+      email?: string;
+      phone?: string;
+      payment?: string;
     };
-    this.errorsObject = {};
-    const fields = ["address", "email", "phone", "payment"] as const;
 
-    for (let field of fields) {
-      if (this[field] === "") {
-        this.errorsObject[field] = errorsMessage[field];
-      }
-    }
+    if (this.address === "") errors.address = "Не заполнено поле адрес";
+    if (this.email === "") errors.email = "Не заполнено поле email";
+    if (this.phone === "") errors.phone = "Не указан телефон";
+    if (this.payment === "") errors.payment = "Не выбран способ оплаты"
 
-    if (
-      !this.errorsObject.address &&
-      !this.errorsObject.email &&
-      !this.errorsObject.phone &&
-      !this.errorsObject.payment
-    )
-      return true;
-    return this.errorsObject;
+    return Object.keys(errors).length > 0 ? errors : true;
   }
 }

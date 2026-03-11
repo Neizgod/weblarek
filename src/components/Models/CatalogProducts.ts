@@ -17,12 +17,8 @@ export class CatalogProducts {
     return this.catalog;
   }
 
-  getProductFromId(id: string): IProduct | undefined {
-    const result = this.catalog.find((item) => {
-      if (item.id === id) return true;
-    });
-    if (!result) return undefined;
-    return result;
+  getProductFromId(id: string): IProduct | undefined{
+    return this.catalog.find((item) => item.id === id);
   }
 
   setCurrentProduct(product: IProduct) {
