@@ -45,21 +45,22 @@ export class CustomerData implements IBuyer {
     };
   }
 
-  validateData():
-    | { address?: string; email?: string; phone?: string; payment?: string }
-    | true {
-    const errors = {} as {
+  validateData(): { isValid: boolean; address?: string; email?: string; phone?: string; payment?: string } {
+    const res = {} as {
       address?: string;
       email?: string;
       phone?: string;
       payment?: string;
+      isValid: boolean;
     };
 
-    if (this.address === "") errors.address = "Не заполнено поле адрес";
-    if (this.email === "") errors.email = "Не заполнено поле email";
-    if (this.phone === "") errors.phone = "Не указан телефон";
-    if (this.payment === "") errors.payment = "Не выбран способ оплаты"
+    if (this.address === "") res.address = "Не заполнено поле адрес";
+    if (this.email === "") res.email = "Не заполнено поле email";
+    if (this.phone === "") res.phone = "Не указан телефон";
+    if (this.payment === "") res.payment = "Не выбран способ оплаты";
 
-    return Object.keys(errors).length > 0 ? errors : true;
+    Object.keys(res).length > 1 ? res.isValid = false : res.isValid = true;
+
+    return res
   }
 }

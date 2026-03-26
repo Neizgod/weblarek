@@ -191,7 +191,7 @@ items: string[] - массив id покупаемых товаров.
 `setAddress(address: string):void` - сохранение адреса;
 `getData(): IBuyer` - получение всех данных покупателя;
 `cleanData(): void` - очистка данных покупателя;
-`validateData(): { address?: string; email?: string; phone?: string; payment?: string } | true` - валидация данных.
+`validateData(): { isValidate: boolean; address?: string; email?: string; phone?: string; payment?: string }` - валидация данных.
 
 ###### Слой коммуникации
 
@@ -208,4 +208,108 @@ items: string[] - массив id покупаемых товаров.
 Методы:  
 `getProducts(): Promise<{total: number; items: IProduct[]}` - выполняет GET запрос на сервер для получения объекта с количеством товаров и самими товарами.  
 `postData(data: IObjectForApi): Promise<{ id: string; total: number }` - принимает объект с данными, которые будут переданы в JSON в теле `POST` запроса.
+
+###### Слой представления
+
+###### Класс Header
+
+Отвечает за отображение счетчика корзины. Является преемником класса Component.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает. 
+
+Поля класса:
+`counterElement: HTMLElement` - ссылка на DOM элемент отображения счетчика.
+`basketButton: HTMLButtonElement` - ссылка на DOM элемент кнопки корзины.
+
+Методы: 
+`set counter(value: number): void` - установка значения counter.
+
+###### Класс Gallery
+
+Отвечает за отображение карточек товара. Является преемником класса Component.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает. 
+
+Поля класса:
+`catalog: HTMLElement[]` - хранит карточки товаров.
+
+Методы:
+`set catalog(items: HTMLElement[]): void`  - устанавливаем список карточек товара для отображения.
+
+###### Класс Card
+
+Содержит основы для работы с карточками товаров. Является преемником класса Component.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+
+Поля класса:
+`data: <IProduct>{}` - данные о товаре.
+
+Методы:
+`set id(id: string): void` - установка id товара;
+`set description(description: string): void` - установка описания товара;
+`set image(image: string): void` - установка ссылки на картинку товара;
+`set title(title: string): void` - установка названия товара;
+`set category(category: string): void` - установка категории товара;
+`set price(price: number | null): void` - установка цены товара;
+
+###### Класс CardCatalog
+
+Отображает карточку товара в галерее. Является преемником класса Card.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+
+Поля и методы класса совпадают с родительским.
+
+###### Класс CardPreview
+
+Отображает карточку товара в превьюшке. Является преемником класса Card.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+
+Поля и методы класса совпадают с родительским.
+
+###### Класс CardBasket
+
+Отображает карточку товара в корзине. Является преемником класса Card.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+
+Поля класса:
+`data: <IProduct & index: number>{}` - данные о товаре.
+
+Методы:
+`set index(value: number): void` - уствновка индекса товара в корзине.
+
+##### Класс Form
+
+Содержит основы для работы с формами. Является преемником класса Component.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+
+Поля класса:
+`data: IBuyer{}` - данные о товаре.
+
+Методы:
+`set payment(payment: string): void` - установка способа оплаты;
+`set email(email: string): void` - установка email покупателя;
+`set phone(phone: string): void` - установка телефона покупателя;
+`set address(address: string): void` - установка адреса покупателя;
+
+##### Класс FormOrder
+
+Отображает форму для выбора способа оплаты и заполнения адреса доставки покупателя. Является преемником класса Form.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+
+Поля и методы класса совпадают с родительским.
+
+##### Класс FormContacts
+
+Отображает форму для заполнения email и телефона покупателя. Является преемником класса Form.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+
+Поля и методы класса совпадают с родительским.
+
 
