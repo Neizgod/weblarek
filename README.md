@@ -228,46 +228,60 @@ items: string[] - массив id покупаемых товаров.
 
 Отвечает за отображение карточек товара. Является преемником класса Component.
 
-`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает. 
+`constructor(container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает. 
 
 Поля класса:
-`catalog: HTMLElement[]` - хранит карточки товаров.
+`catalogElement: HTMLElement` - элемент с карточками товаров.
 
 Методы:
-`set catalog(items: HTMLElement[]): void`  - устанавливаем список карточек товара для отображения.
+`set catalog(items: HTMLElement[])`  - устанавливаем список карточек товара для отображения.
 
 ###### Класс Card
 
-Содержит основы для работы с карточками товаров. Является преемником класса Component.
+Cодержит основы для работы с карточками товаров. Является преемником класса Component.
 
 `constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
 
 Поля класса:
-`data: <IProduct>{}` - данные о товаре.
+`priceElement: HTMLElement` - элемент с ценой товара.
+`titleElement: HTMLElement` - элемент с названием товара
 
 Методы:
-`set id(id: string): void` - установка id товара;
-`set description(description: string): void` - установка описания товара;
-`set image(image: string): void` - установка ссылки на картинку товара;
 `set title(title: string): void` - установка названия товара;
-`set category(category: string): void` - установка категории товара;
 `set price(price: number | null): void` - установка цены товара;
 
 ###### Класс CardCatalog
 
 Отображает карточку товара в галерее. Является преемником класса Card.
 
-`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+`constructor(container: HTMLElement, action?: ICardAction)` - принимает ссылку на DOM элемент за отображение которого он отвечает и объект с методами для обработки события.
 
-Поля и методы класса совпадают с родительским.
+Поля класса:
+`categoryElement: HTMLElement` - элемент с категорией товара.
+`imageElement: HTMLElement` - элемент с картинкой товара
+
+Методы:
+`set category(category: string): void` - установка категории товара;
+`set image(image: string): void` - установка ссылки на картинку товара;
+
 
 ###### Класс CardPreview
 
 Отображает карточку товара в превьюшке. Является преемником класса Card.
 
-`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
+`constructor(container: HTMLElement, action?: ICardAction)` - принимает ссылку на DOM элемент за отображение которого он отвечает и объект с методами для обработки события.
 
-Поля и методы класса совпадают с родительским.
+Поля класса:
+`categoryElement: HTMLElement` - элемент с категорией товара.
+`imageElement: HTMLElement` - элемент с картинкой товара.
+`descriptionElement: HTMLElement` - элемент с описанием товара.
+`cardButton: HTMLButtonElement` - элемент с кнопкой покупки или убирания из корзины товара.
+
+Методы:
+`set category(category: string)` - установка категории товара;
+`set image(image: string)` - установка ссылки на картинку товара;
+`set description(description: string)` - установка описания товара;
+`set buttonText(value: string)` - установка текста в кнопке;
 
 ###### Класс CardBasket
 
@@ -276,10 +290,11 @@ items: string[] - массив id покупаемых товаров.
 `constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает.
 
 Поля класса:
-`data: <IProduct & index: number>{}` - данные о товаре.
+`indexElement: HTMLElement` - элемент с индексом товара.
+`cardButton: HTMLButtonElement` - элемент с кнопкой удаления товара из корзины.
 
 Методы:
-`set index(value: number): void` - уствновка индекса товара в корзине.
+`set index(index: numver): void` - установка индекса товара в корзине;
 
 ##### Класс Form
 
@@ -312,4 +327,37 @@ items: string[] - массив id покупаемых товаров.
 
 Поля и методы класса совпадают с родительским.
 
+##### Класс Modal
+
+Отвечает за отображение контента в модальном окне. Является преемником класса Component.
+
+`constructor(events: IEvents, container: HTMLElement)` - принимает ссылку на DOM элемент за отображение которого он отвечает. 
+
+Поля класса:
+`content: HTMLElement[]` - хранит элементы которые будут выведены в модальном окне.
+
+Методы:
+`set content(value: HTMLElement[]): void` - установка элементов которые будут выведены в модальном окне.
+
+##### Класс Basket
+
+Отвечает за отображение содержимого корзины. Является преемником класса Component.
+
+Поля класса:
+`content: IProduct[]` - хранит элементы которые будут выведены в корзине.
+`total: number` - хранит cумму товаров в корзине.
+
+Методы:
+`set content(value: IProduct[]): void` - установка элементов которые будут выведены в корзине.
+`set total(value: number): void` - установка элементов которые будут выведены в корзине.
+
+#### Класс SuccessModal 
+
+Отвечает за отображение информации об удачной покупке. Является преемником класса Component.
+
+Поля класса:
+`cost: number` - хранит информацию о сумме покупки.
+
+Методы:
+`set cost(value: number): void` - установка информации о сумме покупок.
 

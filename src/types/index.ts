@@ -27,3 +27,7 @@ export interface IObjectForApi extends IBuyer {
 }
 
 export type Payment = "card" | "cash" | "";
+
+export interface ICardAction {
+  onClick(): void 
+}
