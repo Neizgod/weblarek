@@ -16,7 +16,10 @@ export class Card<T> extends Component<T> {
   }
 
   set price(price: number | null) {
-    if (price) this.priceElement.textContent = String(price);
+    if (price) {
+      this.priceElement.textContent = String(price)
+      return
+    } ;
     this.priceElement.textContent = "Бесценно";
   }
 }

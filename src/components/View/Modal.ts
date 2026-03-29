@@ -3,7 +3,7 @@ import { ensureElement } from "../../utils/utils";
 import { IEvents } from "../base/Events";
 
 interface IModal {
-  content: HTMLElement[];
+  content: HTMLElement;
 }
 
 export class Modal extends Component<IModal> {
@@ -18,11 +18,11 @@ export class Modal extends Component<IModal> {
     this.modalContainer = ensureElement<HTMLElement>(".modal__content", this.container);
     this.closeButton = ensureElement<HTMLButtonElement>(".modal__close", this.container);
 
-    //  разобраться с собработкой события
+    //  разобраться с обработкой события
   }
 
-  set content(items: HTMLElement[]) {
+  set content(items: HTMLElement) {
     this.modalContainer.innerHTML = "";
-    this.modalContainer.append(...items);
+    this.modalContainer.append(items);
   }
 }
