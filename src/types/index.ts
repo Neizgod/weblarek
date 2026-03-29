@@ -31,3 +31,7 @@ export type Payment = "card" | "cash" | "";
 export interface ICardAction {
   onClick(): void 
 }
+
+export interface IFormAction {
+  onClick(): void;
+}
