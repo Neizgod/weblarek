@@ -1,8 +1,8 @@
-export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 
 export interface IApi {
-    get<T extends object>(uri: string): Promise<T>;
-    post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+  get<T extends object>(uri: string): Promise<T>;
+  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 
 export interface IProduct {
@@ -12,7 +12,7 @@ export interface IProduct {
   title: string;
   category: string;
   price: number | null;
-} 
+}
 
 export interface IBuyer {
   payment: Payment;
@@ -29,7 +29,7 @@ export interface IObjectForApi extends IBuyer {
 export type Payment = "card" | "cash" | "";
 
 export interface ICardAction {
-  onClick(): void 
+  onClick(): void;
 }
 
 export interface IFormAction {

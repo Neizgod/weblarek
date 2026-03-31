@@ -1,9 +1,10 @@
 import { IProduct } from "../../../types";
 import { Card } from "./Card";
 import { ensureElement } from "../../../utils/utils";
-import { ICardAction } from "../../../types";
+import { categoryMap, CDN_URL } from "../../../utils/constants";
+import { IEvents } from "../../base/Events";
 
-type TCardPreview = Omit<IProduct, 'id'> & { buttonText: string };
+type TCardPreview = Omit<IProduct, "id"> & { buttonText: string };
 
 export class CardPreview extends Card<TCardPreview> {
   protected categoryElement: HTMLElement;
@@ -11,7 +12,7 @@ export class CardPreview extends Card<TCardPreview> {
   protected descriptionElement: HTMLElement;
   protected cardButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement, action?: ICardAction) {
+  constructor(protected events: IEvents, container: HTMLElement) {
     super(container);
 
     this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
@@ -19,17 +20,20 @@ export class CardPreview extends Card<TCardPreview> {
     this.descriptionElement = ensureElement<HTMLImageElement>(".card__text", this.container);
     this.cardButton = ensureElement<HTMLButtonElement>(".card__button", this.container);
 
-    if (action && action.onClick) {
-      this.container.addEventListener("click", action.onClick);
-    }
+    this.cardButton.addEventListener('click', () => {
+      this.events.emit('card:addToBasket&removeFromBasket');
+    })
   }
 
   set category(value: string) {
     this.categoryElement.textContent = value;
+    this.categoryElement.className = ''
+    this.categoryElement.classList.add('card__category')
+    if (value in categoryMap) this.categoryElement.classList.add((categoryMap as any)[value]);
   }
 
   set image(value: string) {
-    this.imageElement.src = value;
+    this.setImage(this.imageElement, CDN_URL + value, this.title);
   }
 
   set description(description: string) {

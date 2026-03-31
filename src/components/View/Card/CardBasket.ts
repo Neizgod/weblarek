@@ -3,7 +3,7 @@ import { Card } from "./Card";
 import { ensureElement } from "../../../utils/utils";
 import { ICardAction } from "../../../types";
 
-type TCardBasket= Omit<IProduct, 'id' | 'image' | 'description'> & {index: number};
+type TCardBasket= Pick<IProduct,'title' | 'price'> & {index: number};
 
 export class CardBasket extends Card<TCardBasket> {
   protected indexElement: HTMLElement;
@@ -20,7 +20,7 @@ export class CardBasket extends Card<TCardBasket> {
     }
   }
 
-  set id(value: string) {
+  set index(value: string) {
     this.indexElement.textContent = value;
   }
 

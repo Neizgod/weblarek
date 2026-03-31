@@ -30,6 +30,6 @@ export class Basket extends Component<IBasket> {
   }
 
   set total(value: number) {
-    this.totalElement.textContent = String(value);
+    this.totalElement.textContent = String(value) + ' синапсов';
   }
 }

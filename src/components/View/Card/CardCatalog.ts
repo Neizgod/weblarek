@@ -2,6 +2,7 @@ import { IProduct } from "../../../types";
 import { Card } from "./Card";
 import { ensureElement } from "../../../utils/utils";
 import { ICardAction } from "../../../types";
+import { CDN_URL, categoryMap } from "../../../utils/constants";
 
 type TCardCatalog = Omit<IProduct, "id" | "description">;
 
@@ -22,9 +23,10 @@ export class CardCatalog extends Card<TCardCatalog> {
 
   set category(value: string) {
     this.categoryElement.textContent = value;
+    if(value in categoryMap) this.categoryElement.classList.add((categoryMap as any)[value])
   }
 
   set image(value: string) {
-    this.setImage(this.imageElement, value, this.title)
+    this.setImage(this.imageElement, CDN_URL + value, this.title);
   }
 }
