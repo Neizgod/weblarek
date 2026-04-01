@@ -3,7 +3,7 @@ import { Card } from "./Card";
 import { ensureElement } from "../../../utils/utils";
 import { ICardAction } from "../../../types";
 
-type TCardBasket= Pick<IProduct,'title' | 'price'> & {index: number};
+type TCardBasket = Pick<IProduct, "title" | "price"> & { index: number };
 
 export class CardBasket extends Card<TCardBasket> {
   protected indexElement: HTMLElement;
@@ -16,12 +16,11 @@ export class CardBasket extends Card<TCardBasket> {
     this.cardButton = ensureElement<HTMLButtonElement>(".basket__item-delete", this.container);
 
     if (action && action.onClick) {
-      this.container.addEventListener("click", action.onClick);
+      this.cardButton.addEventListener("click", action.onClick);
     }
   }
 
   set index(value: string) {
     this.indexElement.textContent = value;
   }
-
 }

@@ -5,6 +5,7 @@ import { IEvents } from "../base/Events";
 interface IBasket {
   content: HTMLElement[];
   total: number;
+  buttonState: boolean;
 }
 
 export class Basket extends Component<IBasket> {
@@ -21,7 +22,8 @@ export class Basket extends Component<IBasket> {
     this.totalElement = ensureElement<HTMLElement>(".basket__price", this.container);
     this.basketButton = ensureElement<HTMLButtonElement>(".basket__button", this.container);
 
-    // Разобраться с обработчиком событий
+    this.basketButton.addEventListener("click", () => this.events.emit("form: openOrder"));
+    this.basketButton.disabled = true;
   }
 
   set content(items: HTMLElement[]) {
@@ -30,6 +32,10 @@ export class Basket extends Component<IBasket> {
   }
 
   set total(value: number) {
-    this.totalElement.textContent = String(value) + ' синапсов';
+    this.totalElement.textContent = String(value) + " синапсов";
+  }
+
+  set buttonState(value: boolean) {
+    this.basketButton.disabled = value;
   }
 }

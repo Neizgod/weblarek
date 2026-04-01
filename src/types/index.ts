@@ -32,6 +32,11 @@ export interface ICardAction {
   onClick(): void;
 }
 
+export interface ICardPreviewAction {
+  deleteFromBasket?(product: IProduct): void;
+  addToBasket?(): void;
+}
+
 export interface IFormAction {
   onClick(): void;
 }

@@ -4,7 +4,7 @@ import { ensureElement } from "../../../utils/utils";
 import { categoryMap, CDN_URL } from "../../../utils/constants";
 import { IEvents } from "../../base/Events";
 
-type TCardPreview = Omit<IProduct, "id"> & { buttonText: string };
+type TCardPreview = Omit<IProduct, "id"> & { buttonText: "Удалить из корзины" | "Купить" };
 
 export class CardPreview extends Card<TCardPreview> {
   protected categoryElement: HTMLElement;
@@ -20,15 +20,12 @@ export class CardPreview extends Card<TCardPreview> {
     this.descriptionElement = ensureElement<HTMLImageElement>(".card__text", this.container);
     this.cardButton = ensureElement<HTMLButtonElement>(".card__button", this.container);
 
-    this.cardButton.addEventListener('click', () => {
-      this.events.emit('card:addToBasket&removeFromBasket');
-    })
   }
 
   set category(value: string) {
     this.categoryElement.textContent = value;
-    this.categoryElement.className = ''
-    this.categoryElement.classList.add('card__category')
+    this.categoryElement.className = "";
+    this.categoryElement.classList.add("card__category");
     if (value in categoryMap) this.categoryElement.classList.add((categoryMap as any)[value]);
   }
 
@@ -40,7 +37,20 @@ export class CardPreview extends Card<TCardPreview> {
     this.descriptionElement.textContent = description;
   }
 
-  set buttonText(value: string) {
+  set buttonText(value: "Удалить из корзины" | "Купить") {
+    if (value === "Удалить из корзины") this.cardButton.onclick = () => this.events.emit("basket:deleteItemFromPreview")
+    if (value === "Купить") this.cardButton.onclick = () => this.events.emit("card:addToBasket")
     this.cardButton.textContent = value;
+  }
+
+  set price(price: number | null) {
+    if (price) {
+      this.priceElement.textContent = String(price) + " синапсов";
+      this.cardButton.disabled = false;
+      return;
+    }
+    this.priceElement.textContent = "Бесценно";
+    this.cardButton.textContent = 'Недоступно'
+    this.cardButton.disabled = true;
   }
 }

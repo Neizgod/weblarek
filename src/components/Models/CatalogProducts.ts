@@ -26,7 +26,7 @@ export class CatalogProducts {
 
   setCurrentProduct(product: IProduct) {
     this.currentProduct = product;
-    this.events.emit("card:renderPreview");
+    this.events.emit("card:changedCurrentProduct");
   }
 
   getCurrentProduct(): IProduct | null {
