@@ -16,10 +16,10 @@ import { cloneTemplate } from "./utils/utils";
 import { Modal } from "./components/View/Modal";
 import { Header } from "./components/View/Header";
 import { Gallery } from "./components/View/Gallery";
-import { IProduct } from "./types";
+import { IProduct, Payment } from "./types";
 
 const eventBroker = new EventEmitter();
-const customerData = new CustomerData();
+const customerData = new CustomerData(eventBroker);
 const shopingCart = new ShopingCart(eventBroker);
 const apiBase = new Api(API_URL);
 const api = new Communication(apiBase);
@@ -28,17 +28,28 @@ const catalogProducts = new CatalogProducts(eventBroker);
 const basketTemplate = document.querySelector("#basket") as HTMLTemplateElement;
 const modalElement = document.querySelector("#modal-container") as HTMLElement;
 const headerElement = document.querySelector(".header") as HTMLElement;
-const cardCatalogTemplate = document.querySelector("#card-catalog") as HTMLTemplateElement;
-const cardBasketTemplate = document.querySelector("#card-basket") as HTMLTemplateElement;
-const cardPreviewTemplate = document.querySelector("#card-preview") as HTMLTemplateElement;
-const formOrderTemplate = document.querySelector("#order") as HTMLTemplateElement;
+const cardCatalogTemplate = document.querySelector(
+  "#card-catalog",
+) as HTMLTemplateElement;
+const cardBasketTemplate = document.querySelector(
+  "#card-basket",
+) as HTMLTemplateElement;
+const cardPreviewTemplate = document.querySelector(
+  "#card-preview",
+) as HTMLTemplateElement;
+const formOrderTemplate = document.querySelector(
+  "#order",
+) as HTMLTemplateElement;
 
 const basketView = new Basket(eventBroker, cloneTemplate(basketTemplate));
 const modal = new Modal(eventBroker, modalElement);
 const header = new Header(eventBroker, headerElement);
 const gallery = new Gallery(document.documentElement);
-const cardPreview = new CardPreview(eventBroker, cloneTemplate(cardPreviewTemplate));
-const formOrder = new FormOrder(cloneTemplate(formOrderTemplate));
+const cardPreview = new CardPreview(
+  eventBroker,
+  cloneTemplate(cardPreviewTemplate),
+);
+const formOrder = new FormOrder(eventBroker, cloneTemplate(formOrderTemplate));
 
 function openModal() {
   modal.render().classList.add("modal_active");
@@ -61,6 +72,7 @@ eventBroker.on("basket:open", () => {
 });
 
 eventBroker.on("modal:close", () => {
+  customerData.cleanData();
   closeModal();
 });
 
@@ -105,7 +117,11 @@ eventBroker.on("basket:changedContent", () => {
     return card.render(item);
   });
   const total = shopingCart.getPriceProducts();
-  basketView.render({ content: cardsBasket, total: total, buttonState: total ? false : true });
+  basketView.render({
+    content: cardsBasket,
+    total: total,
+    buttonState: total ? false : true,
+  });
 });
 
 eventBroker.on("basket:deleteItem", (product: IProduct) => {
@@ -127,5 +143,37 @@ eventBroker.on("card:addToBasket", () => {
 });
 
 eventBroker.on("form: openOrder", () => {
-  modal.render({ content: formOrder.render() });
+  let isButtonContinueActive;
+  if (
+    !customerData.validateData().payment &&
+    !customerData.validateData().address
+  ) {
+    isButtonContinueActive = false;
+  } else isButtonContinueActive = true;
+
+  modal.render({
+    content: formOrder.render({
+      buttonContinueState: !isButtonContinueActive,
+    }),
+  });
+});
+
+eventBroker.on("form:selectPayment", (value: { payment: Payment }) => {
+  customerData.setPayment(value.payment);
+});
+
+eventBroker.on("customerData: changed", () => {
+  let isButtonContinueActive;
+  if (
+    customerData.validateData().payment &&
+    customerData.validateData().address
+  ) {
+    isButtonContinueActive = false;
+  } else isButtonContinueActive = true;
+  modal.render({
+    content: formOrder.render({
+      buttonContinueState: !isButtonContinueActive,
+      activeButton: customerData.payment,
+    }),
+  });
 });

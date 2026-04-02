@@ -1,4 +1,5 @@
 import { IBuyer, Payment } from "../../types";
+import { IEvents } from "../base/Events";
 
 export class CustomerData implements IBuyer {
   payment: Payment;
@@ -6,7 +7,7 @@ export class CustomerData implements IBuyer {
   phone: string;
   address: string;
 
-  constructor() {
+  constructor( protected events: IEvents) {
     this.address = "";
     this.email = "";
     this.phone = "";
@@ -26,7 +27,9 @@ export class CustomerData implements IBuyer {
   }
 
   setPayment(payment: Payment): void {
+    console.log('ESSS')
     this.payment = payment;
+    this.events.emit('customerData: changed')
   }
 
   cleanData(): void {
