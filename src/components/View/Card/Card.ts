@@ -16,7 +16,7 @@ export class Card<T> extends Component<T> {
   }
 
   set price(price: number | null) {
-    if (price) {
+    if (price !== null) {
       this.priceElement.textContent = String(price) + ' синапсов'
       return
     } ;

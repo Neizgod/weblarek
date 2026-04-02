@@ -110,28 +110,27 @@ eventBroker.on("card:select", (item: IProduct) => {
 
 eventBroker.on("catalog:changedCurrentProduct", () => {
   const product = catalogProducts.getCurrentProduct();
-  if (product)
+  if (product) {
+    const cardData = Object.assign(product);
     if (!shopingCart.isInTheCart(product.id)) {
-      const cardData = Object.assign(product);
       if (product.price) cardData.buttonText = "Купить";
-      modal.render({ content: cardPreview.render(cardData) });
     } else {
-      const cardData = Object.assign(product);
       if (product.price) cardData.buttonText = "Удалить из корзины";
-      modal.render({ content: cardPreview.render(cardData) });
     }
+    modal.render({ content: cardPreview.render(cardData) });
+  }
   openModal();
 });
 
 eventBroker.on("basket:changedContent", () => {
   const count = shopingCart.getQuantity();
   header.render({ counter: count });
-  const cardsBasket = shopingCart.getContents().map((item) => {
+  const cardsBasket = shopingCart.getContents().map((item, index) => {
     const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
       onClick: () => eventBroker.emit("basket:deleteItem", item),
     });
     const cardBasketData = Object.assign(item);
-    cardBasketData.index = shopingCart.getContents().indexOf(item) + 1;
+    cardBasketData.index = index + 1;
     return card.render(item);
   });
   const total = shopingCart.getPriceProducts();
@@ -165,7 +164,7 @@ eventBroker.on("form: openOrder", () => {
 
   modal.render({
     content: formOrder.render({
-      buttonContinueState: validateForm.isValid,
+      buttonState: validateForm.isValid,
     }),
   });
 });
@@ -176,18 +175,12 @@ eventBroker.on("form:selectPayment", (value: { payment: Payment }) => {
 
 eventBroker.on("customerData: paymentOrAddressChanged", () => {
   const validateForm = validateFormOrder();
-  let errorsMessage = "";
-  if (validateForm.address || validateForm.payment) {
-    if (validateForm.address) errorsMessage = validateForm.address;
-    if (validateForm.payment)
-      errorsMessage = errorsMessage ? errorsMessage + ", " + validateForm.payment : validateForm.payment;
-  }
-  modal.render({
-    content: formOrder.render({
-      buttonContinueState: validateForm.isValid,
-      activeButton: customerData.getData().payment,
-      textErrors: errorsMessage,
-    }),
+  const errorsMessage = [validateForm.address, validateForm.payment].filter(Boolean).join(", ");
+
+  formOrder.render({
+    buttonState: validateForm.isValid,
+    activeButton: customerData.getData().payment,
+    textErrors: errorsMessage,
   });
 });
 
@@ -215,39 +208,26 @@ eventBroker.on("form:changePhone", (value: { phone: string }) => {
 
 eventBroker.on("customerData: emailOrPhoneChanged", () => {
   const validateForm = validateFormContacts();
-  let errorsMessage = "";
-  if (!validateForm.isValid) {
-    if (validateForm.email) errorsMessage = validateForm.email;
+  const errorsMessage = [validateForm.email, validateForm.phone].filter(Boolean).join(", ");
 
-    if (validateForm.phone)
-      errorsMessage = errorsMessage ? errorsMessage + ", " + validateForm.phone : validateForm.phone;
-  }
-  modal.render({
-    content: formContacts.render({
-      buttonState: validateForm.isValid,
-      textErrors: errorsMessage,
-    }),
+  formContacts.render({
+    buttonState: validateForm.isValid,
+    textErrors: errorsMessage,
   });
 });
 
 eventBroker.on("form: startShopping", async () => {
   const data: IObjectForApi = {
-    address: "",
-    email: "",
-    payment: "",
-    phone: "",
-    total: 0,
-    items: [],
+    ...customerData.getData(),
+    total: shopingCart.getPriceProducts(),
+    items: shopingCart.getContents().map((item) => item.id),
   };
-  const dataCustomer = customerData.getData();
-  const items = shopingCart.getContents();
-  Object.assign(data, dataCustomer);
-  data.total = shopingCart.getPriceProducts();
-  data.items = items.map((item) => item.id);
   try {
-    const purchaseResult: { id: string; total: number } = await api.postData(data);
+    const purchaseResult = await api.postData(data);
     shopingCart.cleanCart();
     customerData.cleanData();
+    formOrder.cleanData();
+    formContacts.cleanData();
     modal.render({ content: successModal.render({ total: purchaseResult.total }) });
   } catch (err) {
     console.log(err);

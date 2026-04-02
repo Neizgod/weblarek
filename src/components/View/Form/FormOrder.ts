@@ -1,10 +1,10 @@
 import { ensureElement } from "../../../utils/utils";
 import { Form } from "./Form";
-import { IBuyer, IFormAction, Payment } from "../../../types";
+import { IBuyer, Payment } from "../../../types";
 import { IEvents } from "../../base/Events";
 
 type IFormOrder = {
-  buttonContinueState: boolean;
+  buttonState: boolean;
   activeButton: Payment | null;
   payment: Payment;
   textErrors: string;
@@ -32,12 +32,12 @@ export class FormOrder extends Form<IFormOrder> {
       this.events.emit("form:selectPayment", { payment: "cash" });
     });
 
-    this.addressElement.addEventListener("change", () =>
+    this.addressElement.addEventListener("input", () =>
       this.events.emit("form:changeAddress", { address: this.addressElement.value }),
     );
 
     this.buttonElement.addEventListener("click", (e) => {
-      e.preventDefault()
+      e.preventDefault();
       this.events.emit("form: openContacts");
     });
   }
@@ -58,5 +58,10 @@ export class FormOrder extends Form<IFormOrder> {
       this.paymentOnlineButton.classList.remove("button_alt-active");
       return;
     }
+  }
+  cleanData() {
+    this.paymentCashButton.classList.remove("button_alt-active");
+    this.paymentOnlineButton.classList.remove("button_alt-active");
+    this.addressElement.value = "";
   }
 }

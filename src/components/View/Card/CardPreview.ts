@@ -12,14 +12,16 @@ export class CardPreview extends Card<TCardPreview> {
   protected descriptionElement: HTMLElement;
   protected cardButton: HTMLButtonElement;
 
-  constructor(protected events: IEvents, container: HTMLElement) {
+  constructor(
+    protected events: IEvents,
+    container: HTMLElement,
+  ) {
     super(container);
 
     this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
     this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
     this.descriptionElement = ensureElement<HTMLImageElement>(".card__text", this.container);
     this.cardButton = ensureElement<HTMLButtonElement>(".card__button", this.container);
-
   }
 
   set category(value: string) {
@@ -38,19 +40,20 @@ export class CardPreview extends Card<TCardPreview> {
   }
 
   set buttonText(value: "Удалить из корзины" | "Купить") {
-    if (value === "Удалить из корзины") this.cardButton.onclick = () => this.events.emit("basket:deleteItemFromPreview")
-    if (value === "Купить") this.cardButton.onclick = () => this.events.emit("card:addToBasket")
+    if (value === "Удалить из корзины")
+      this.cardButton.onclick = () => this.events.emit("basket:deleteItemFromPreview");
+    if (value === "Купить") this.cardButton.onclick = () => this.events.emit("card:addToBasket");
     this.cardButton.textContent = value;
   }
 
   set price(price: number | null) {
-    if (price) {
+    if (price !== null) {
       this.priceElement.textContent = String(price) + " синапсов";
       this.cardButton.disabled = false;
       return;
     }
     this.priceElement.textContent = "Бесценно";
-    this.cardButton.textContent = 'Недоступно'
+    this.cardButton.textContent = "Недоступно";
     this.cardButton.disabled = true;
   }
 }

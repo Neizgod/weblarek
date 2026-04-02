@@ -20,11 +20,11 @@ export class FormContacts extends Form<IFormContacts> {
     this.emailElement = ensureElement<HTMLInputElement>('.form__input[name="email"]', this.container);
     this.phoneElement = ensureElement<HTMLInputElement>('.form__input[name="phone"]', this.container);
 
-    this.emailElement.addEventListener("change", () => {
+    this.emailElement.addEventListener("input", () => {
       this.events.emit("form:changeEmail", { email: this.emailElement.value });
     });
 
-    this.phoneElement.addEventListener("change", () => {
+    this.phoneElement.addEventListener("input", () => {
       this.events.emit("form:changePhone", { phone: this.phoneElement.value });
     });
 
@@ -33,7 +33,9 @@ export class FormContacts extends Form<IFormContacts> {
       this.events.emit("form: startShopping");
     });
   }
-  set buttonState(value: boolean) {
-    this.buttonElement.disabled = !value;
+
+  cleanData() {
+    this.emailElement.value = "";
+    this.phoneElement.value = "";
   }
 }

@@ -20,4 +20,8 @@ export class Form<T> extends Component<T> {
     this.errorsElement.textContent = "";
     this.errorsElement.textContent = message;
   }
+
+  set buttonState(value: boolean) {
+    this.buttonElement.disabled = !value;
+  }
 }
