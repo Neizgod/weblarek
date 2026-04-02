@@ -7,7 +7,7 @@ export class CustomerData implements IBuyer {
   phone: string;
   address: string;
 
-  constructor( protected events: IEvents) {
+  constructor(protected events: IEvents) {
     this.address = "";
     this.email = "";
     this.phone = "";
@@ -16,20 +16,22 @@ export class CustomerData implements IBuyer {
 
   setAddress(address: string): void {
     this.address = address;
+    this.events.emit("customerData: paymentOrAddressChanged");
   }
 
   setEmail(email: string): void {
     this.email = email;
+    this.events.emit("customerData: emailOrPhoneChanged");
   }
 
   setPhone(phone: string): void {
     this.phone = phone;
+    this.events.emit("customerData: emailOrPhoneChanged");
   }
 
   setPayment(payment: Payment): void {
-    console.log('ESSS')
     this.payment = payment;
-    this.events.emit('customerData: changed')
+    this.events.emit("customerData: paymentOrAddressChanged");
   }
 
   cleanData(): void {
@@ -49,21 +51,20 @@ export class CustomerData implements IBuyer {
   }
 
   validateData(): { isValid: boolean; address?: string; email?: string; phone?: string; payment?: string } {
-    const res = {} as {
+    const errors = {} as {
       address?: string;
       email?: string;
       phone?: string;
       payment?: string;
-      isValid: boolean;
     };
 
-    if (this.address === "") res.address = "Не заполнено поле адрес";
-    if (this.email === "") res.email = "Не заполнено поле email";
-    if (this.phone === "") res.phone = "Не указан телефон";
-    if (this.payment === "") res.payment = "Не выбран способ оплаты";
+    if (this.address === "") errors.address = "Не заполнено поле адрес";
+    if (this.email === "") errors.email = "Не заполнено поле email";
+    if (this.phone === "") errors.phone = "Не указан телефон";
+    if (this.payment === "") errors.payment = "Не выбран способ оплаты";
 
-    Object.keys(res).length > 1 ? res.isValid = false : res.isValid = true;
+    const isValid = Object.keys(errors).length === 0;
 
-    return res
+    return { isValid, ...errors };
   }
 }

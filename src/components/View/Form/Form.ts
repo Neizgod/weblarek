@@ -16,7 +16,8 @@ export class Form<T> extends Component<T> {
     }
   }
 
-  set textErrors(error: string) {
-    this.errorsElement.textContent = error;
+  set textErrors(message: string) {
+    this.errorsElement.textContent = "";
+    this.errorsElement.textContent = message;
   }
 }

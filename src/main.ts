@@ -16,7 +16,8 @@ import { cloneTemplate } from "./utils/utils";
 import { Modal } from "./components/View/Modal";
 import { Header } from "./components/View/Header";
 import { Gallery } from "./components/View/Gallery";
-import { IProduct, Payment } from "./types";
+import { IObjectForApi, IProduct, Payment } from "./types";
+import { SuccessModal } from "./components/Models/SuccessModal";
 
 const eventBroker = new EventEmitter();
 const customerData = new CustomerData(eventBroker);
@@ -28,30 +29,48 @@ const catalogProducts = new CatalogProducts(eventBroker);
 const basketTemplate = document.querySelector("#basket") as HTMLTemplateElement;
 const modalElement = document.querySelector("#modal-container") as HTMLElement;
 const headerElement = document.querySelector(".header") as HTMLElement;
-const cardCatalogTemplate = document.querySelector(
-  "#card-catalog",
-) as HTMLTemplateElement;
-const cardBasketTemplate = document.querySelector(
-  "#card-basket",
-) as HTMLTemplateElement;
-const cardPreviewTemplate = document.querySelector(
-  "#card-preview",
-) as HTMLTemplateElement;
-const formOrderTemplate = document.querySelector(
-  "#order",
-) as HTMLTemplateElement;
+const cardCatalogTemplate = document.querySelector("#card-catalog") as HTMLTemplateElement;
+const cardBasketTemplate = document.querySelector("#card-basket") as HTMLTemplateElement;
+const cardPreviewTemplate = document.querySelector("#card-preview") as HTMLTemplateElement;
+const formOrderTemplate = document.querySelector("#order") as HTMLTemplateElement;
+const formContactsTemplate = document.querySelector("#contacts") as HTMLTemplateElement;
+const successModalTemplate = document.querySelector("#success") as HTMLTemplateElement;
 
 const basketView = new Basket(eventBroker, cloneTemplate(basketTemplate));
 const modal = new Modal(eventBroker, modalElement);
 const header = new Header(eventBroker, headerElement);
 const gallery = new Gallery(document.documentElement);
-const cardPreview = new CardPreview(
-  eventBroker,
-  cloneTemplate(cardPreviewTemplate),
-);
+const cardPreview = new CardPreview(eventBroker, cloneTemplate(cardPreviewTemplate));
 const formOrder = new FormOrder(eventBroker, cloneTemplate(formOrderTemplate));
+const formContacts = new FormContacts(eventBroker, cloneTemplate(formContactsTemplate));
+const successModal = new SuccessModal(eventBroker, cloneTemplate(successModalTemplate));
 
-function openModal() {
+function validateFormOrder(): { isValid: boolean; payment?: string; address?: string } {
+  let isValid;
+  const errors = customerData.validateData();
+  if (errors.payment || errors.address) {
+    isValid = false;
+    const payment = errors.payment;
+    const address = errors.address;
+    return { isValid, payment, address };
+  } else {
+    isValid = true;
+    return { isValid };
+  }
+}
+
+function validateFormContacts(): { isValid: boolean; email?: string; phone?: string } {
+  const data = customerData.validateData();
+  const isValid = data.isValid;
+  if (!isValid) {
+    const email = data.email;
+    const phone = data.phone;
+    return { isValid, email, phone };
+  }
+  return { isValid };
+}
+
+function openModal(): void {
   modal.render().classList.add("modal_active");
 }
 
@@ -72,7 +91,6 @@ eventBroker.on("basket:open", () => {
 });
 
 eventBroker.on("modal:close", () => {
-  customerData.cleanData();
   closeModal();
 });
 
@@ -90,7 +108,7 @@ eventBroker.on("card:select", (item: IProduct) => {
   catalogProducts.setCurrentProduct(item);
 });
 
-eventBroker.on("card:changedCurrentProduct", () => {
+eventBroker.on("catalog:changedCurrentProduct", () => {
   const product = catalogProducts.getCurrentProduct();
   if (product)
     if (!shopingCart.isInTheCart(product.id)) {
@@ -143,17 +161,11 @@ eventBroker.on("card:addToBasket", () => {
 });
 
 eventBroker.on("form: openOrder", () => {
-  let isButtonContinueActive;
-  if (
-    !customerData.validateData().payment &&
-    !customerData.validateData().address
-  ) {
-    isButtonContinueActive = false;
-  } else isButtonContinueActive = true;
+  const validateForm = validateFormOrder();
 
   modal.render({
     content: formOrder.render({
-      buttonContinueState: !isButtonContinueActive,
+      buttonContinueState: validateForm.isValid,
     }),
   });
 });
@@ -162,18 +174,82 @@ eventBroker.on("form:selectPayment", (value: { payment: Payment }) => {
   customerData.setPayment(value.payment);
 });
 
-eventBroker.on("customerData: changed", () => {
-  let isButtonContinueActive;
-  if (
-    customerData.validateData().payment &&
-    customerData.validateData().address
-  ) {
-    isButtonContinueActive = false;
-  } else isButtonContinueActive = true;
+eventBroker.on("customerData: paymentOrAddressChanged", () => {
+  const validateForm = validateFormOrder();
+  let errorsMessage = "";
+  if (validateForm.address || validateForm.payment) {
+    if (validateForm.address) errorsMessage = validateForm.address;
+    if (validateForm.payment)
+      errorsMessage = errorsMessage ? errorsMessage + ", " + validateForm.payment : validateForm.payment;
+  }
   modal.render({
     content: formOrder.render({
-      buttonContinueState: !isButtonContinueActive,
-      activeButton: customerData.payment,
+      buttonContinueState: validateForm.isValid,
+      activeButton: customerData.getData().payment,
+      textErrors: errorsMessage,
     }),
   });
+});
+
+eventBroker.on("form:changeAddress", (value: { address: string }) => {
+  customerData.setAddress(value.address);
+});
+
+eventBroker.on("form: openContacts", () => {
+  const validateForm = validateFormContacts();
+
+  modal.render({
+    content: formContacts.render({
+      buttonState: validateForm.isValid,
+    }),
+  });
+});
+
+eventBroker.on("form:changeEmail", (value: { email: string }) => {
+  customerData.setEmail(value.email);
+});
+
+eventBroker.on("form:changePhone", (value: { phone: string }) => {
+  customerData.setPhone(value.phone);
+});
+
+eventBroker.on("customerData: emailOrPhoneChanged", () => {
+  const validateForm = validateFormContacts();
+  let errorsMessage = "";
+  if (!validateForm.isValid) {
+    if (validateForm.email) errorsMessage = validateForm.email;
+
+    if (validateForm.phone)
+      errorsMessage = errorsMessage ? errorsMessage + ", " + validateForm.phone : validateForm.phone;
+  }
+  modal.render({
+    content: formContacts.render({
+      buttonState: validateForm.isValid,
+      textErrors: errorsMessage,
+    }),
+  });
+});
+
+eventBroker.on("form: startShopping", async () => {
+  const data: IObjectForApi = {
+    address: "",
+    email: "",
+    payment: "",
+    phone: "",
+    total: 0,
+    items: [],
+  };
+  const dataCustomer = customerData.getData();
+  const items = shopingCart.getContents();
+  Object.assign(data, dataCustomer);
+  data.total = shopingCart.getPriceProducts();
+  data.items = items.map((item) => item.id);
+  try {
+    const purchaseResult: { id: string; total: number } = await api.postData(data);
+    shopingCart.cleanCart();
+    customerData.cleanData();
+    modal.render({ content: successModal.render({ total: purchaseResult.total }) });
+  } catch (err) {
+    console.log(err);
+  }
 });

@@ -18,11 +18,12 @@ export class SuccessModal extends Component<ISuccessModal> {
     this.totalElement = ensureElement<HTMLElement>(".order-success__description", this.container);
     this.successButton = ensureElement<HTMLButtonElement>(".order-success__close", this.container);
 
-    //  разобраться с собработкой события
+    this.successButton.addEventListener("click", () => {
+      this.events.emit("modal:close");
+    });
   }
 
   set total(value: number) {
-    this.totalElement.textContent = String(value);
-
+    this.totalElement.textContent = String(value) + " синапсов";
   }
 }
