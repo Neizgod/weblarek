@@ -42,10 +42,6 @@ export class FormOrder extends Form<IFormOrder> {
     });
   }
 
-  set buttonContinueState(value: boolean) {
-    this.buttonElement.disabled = !value;
-  }
-
   set activeButton(value: Payment | null) {
     if (value === "card") {
       this.paymentOnlineButton.classList.add("button_alt-active");
